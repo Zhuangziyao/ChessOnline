@@ -1,0 +1,33 @@
+body {
+  padding-top: 20px;
+  padding-left:20px; 
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#content{
+  padding:10px;
+}
+
+.chessman{
+  z-index: 10;
+  cursor: pointer;
+}
+
+#plain{
+  width: 500px;
+  z-index: 3;
+  margin:  auto;
+}
+
+.circle{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: aquamarine;
+  cursor: pointer;
+}

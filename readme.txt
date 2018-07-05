@@ -1,3 +1,4 @@
 在线象棋游戏
 
-nodejs+express+socket.io
+技术：nodejs+express+socket.io
+

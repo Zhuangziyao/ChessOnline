@@ -14,7 +14,7 @@ var down=6;
 //存储点击棋子对象
 var clickChessMan;
 //用户
-var user='black';
+var user='red';
 
 //对手
 var opponent;
@@ -29,6 +29,8 @@ if(user=='red')
     active=true;
 else
     active=false;
+
+var now=user;
 //初始布局
 function initUp(color){
     var content=document.getElementById('content');
@@ -93,7 +95,7 @@ for(var i=array.length-1;i>=0;i--){
             img.style.setProperty('position','absolute');
             img.style.setProperty('left',p_left+i*length-length/2+'px');
             img.style.setProperty('top',p_top+(3+down)*length-length/2+'px');
-       }
+    }
         content.appendChild(img);
 }
 }
@@ -104,9 +106,9 @@ initDown(user);
 //点击棋子
 function clickJudge(e){
 //是否是本方回合
-if(active)
+//if(active)
 //判断是否是自己的棋子
-if(e.target.getAttribute('class').indexOf(user)>-1){
+if(e.target.getAttribute('class').indexOf(now)>-1){
     //清除之前提示点
     clearCircle();
     clickChessMan=e.target;
@@ -131,6 +133,8 @@ if(e.target.getAttribute('class').indexOf(user)>-1){
     //通过提示点来判断是否之前点击了本方旗子
     if(document.getElementsByClassName('circle').length>0)
         if(canEat(e.target.offsetLeft,e.target.offsetTop)){
+            //播放音效
+            playAudio();
             //判断吃掉的是否是将帅
             if(e.target.getAttribute('class').indexOf('jiang')>-1){
                 e.target.remove();
@@ -140,23 +144,37 @@ if(e.target.getAttribute('class').indexOf(user)>-1){
             }
             //清除之前提示点
             clearCircle();
-            active=false;
+            if(now==user)
+                now=opponent;
+            else
+                now=user;
         }
 }
 }
 //兵的移动逻辑
 function showpath_bing(e){
-clearCircle();
-//获取坐标点
-var x=e.target.offsetLeft+length/2;
-var y=e.target.offsetTop+length/2;
-if(y>(4*length+p_top)){//未过河 只能前进一格
-        addCircle(x,y-length);
-}else{//已过河 三个方向前进一格           
-        addCircle(x,y-length);
-        addCircle(x-length,y);
-        addCircle(x+length,y);
-}
+    clearCircle();
+    //获取坐标点
+    var x=e.target.offsetLeft+length/2;
+    var y=e.target.offsetTop+length/2;
+    if(now==user){
+        if(y>(4*length+p_top)){//未过河 只能前进一格
+            addCircle(x,y-length);
+    }else{//已过河 三个方向前进一格           
+            addCircle(x,y-length);
+            addCircle(x-length,y);
+            addCircle(x+length,y);
+    }
+    }else{
+        if(y<=(4*length+p_top)){
+            addCircle(x,y+length);
+        }else{
+            addCircle(x,y+length);
+            addCircle(x-length,y);
+            addCircle(x+length,y);
+        }
+    }
+    
 }
 //炮的移动逻辑
 function showpath_pao(e){
@@ -331,26 +349,50 @@ clearCircle();
 //获取坐标点
 var x=e.target.offsetLeft+length/2;
 var y=e.target.offsetTop+length/2;
-//左上
-if(hasChessMan(x-length,y-length)==false){
-    if(hasChessMan(x-2*length,y-2*length)==false&&(y-2*length)>p_top+4*length)
-        addCircle(x-2*length,y-2*length);
+if(now==user){
+    //左上
+    if(hasChessMan(x-length,y-length)==false){
+        if((y-2*length)>p_top+4*length)
+            addCircle(x-2*length,y-2*length);
+    }
+    //右上
+    if(hasChessMan(x+length,y-length)==false){
+        if((y-2*length)>p_top+4*length)
+            addCircle(x+2*length,y-2*length);
+    }
+    //左下
+    if(hasChessMan(x-length,y+length)==false){
+        if((y+2*length)>p_top+4*length)
+            addCircle(x-2*length,y+2*length);
+    }
+    //右下
+    if(hasChessMan(x+length,y+length)==false){
+        if((y+2*length)>p_top+4*length)
+            addCircle(x+2*length,y+2*length);
+    }
+}else{
+    //左上
+    if(hasChessMan(x-length,y-length)==false){
+        if((y-2*length)>=p_top)
+            addCircle(x-2*length,y-2*length);
+    }
+    //右上
+    if(hasChessMan(x+length,y-length)==false){
+        if((y-2*length)>=p_top)
+            addCircle(x+2*length,y-2*length);
+    }
+    //左下
+    if(hasChessMan(x-length,y+length)==false){
+        if((y+2*length)<p_top+5*length)
+            addCircle(x-2*length,y+2*length);
+    }
+    //右下
+    if(hasChessMan(x+length,y+length)==false){
+        if((y+2*length)<p_top+5*length)
+            addCircle(x+2*length,y+2*length);
+    }
 }
-//右上
-if(hasChessMan(x+length,y-length)==false){
-    if(hasChessMan(x+2*length,y-2*length)==false&&(y-2*length)>p_top+4*length)
-        addCircle(x+2*length,y-2*length);
-}
-//左下
-if(hasChessMan(x-length,y+length)==false){
-    if(hasChessMan(x-2*length,y+2*length)==false&&(y+2*length)>p_top+4*length)
-        addCircle(x-2*length,y+2*length);
-}
-//右下
-if(hasChessMan(x+length,y+length)==false){
-    if(hasChessMan(x+2*length,y+2*length)==false&&(y+2*length)>p_top+4*length)
-        addCircle(x+2*length,y+2*length);
-}
+
 }
 //士的移动逻辑
 function showpath_shi(e){
@@ -358,30 +400,58 @@ clearCircle();
 //获取坐标点
 var x=e.target.offsetLeft+length/2;
 var y=e.target.offsetTop+length/2;
-//左边
-if(x-length>=p_left+3*length){
-    if(y-length>=p_top+7*length){
-        if(hasChessMan(x-length,y-length)==false)
-            addCircle(x-length,y-length);
-    }
-    if(p_top+9*length<=y+length){
-        if(hasChessMan(x-length,y+length)==false){
-            addCircle(x-length,y+length);
+if(now==user){
+    //左边
+    if(x-length>=p_left+3*length){
+        if(y-length>=p_top+7*length){
+            if(hasChessMan(x-length,y-length)==false)
+                addCircle(x-length,y-length);
         }
-            
+        if(p_top+9*length>=y+length){
+            if(hasChessMan(x-length,y+length)==false){
+                addCircle(x-length,y+length);
+            }
+                
+        }
+    }
+    //右边
+    if(x+length<=p_left+5*length){
+        if(y-length>=p_top+7*length){
+            if(hasChessMan(x+length,y-length)==false)
+                addCircle(x+length,y-length);
+        }
+        if(y+length<=p_top+9*length){
+            if(hasChessMan(x+length,y+length)==false)
+                addCircle(x+length,y+length);
+        }
+    }
+}else{
+    //左边
+    if(x-length>=p_left+3*length){
+        if(y-length>=p_top){
+            if(hasChessMan(x-length,y-length)==false)
+                addCircle(x-length,y-length);
+        }
+        if(p_top+2*length>=y+length){
+            if(hasChessMan(x-length,y+length)==false){
+                addCircle(x-length,y+length);
+            }
+                
+        }
+    }
+    //右边
+    if(x+length<=p_left+5*length){
+        if(y-length>=p_top){
+            if(hasChessMan(x+length,y-length)==false)
+                addCircle(x+length,y-length);
+        }
+        if(y+length<=p_top+2*length){
+            if(hasChessMan(x+length,y+length)==false)
+                addCircle(x+length,y+length);
+        }
     }
 }
-//右边
-if(x+length<=p_left+5*length){
-    if(y-length>=p_top+7*length){
-        if(hasChessMan(x+length,y-length)==false)
-            addCircle(x+length,y-length);
-    }
-    if(y+length<=p_top+9*length){
-        if(hasChessMan(x+length,y+length)==false)
-            addCircle(x+length,y+length);
-    }
-}
+
 
 }
 //将的移动逻辑
@@ -390,43 +460,72 @@ clearCircle();
 //获取坐标点
 var x=e.target.offsetLeft+length/2;
 var y=e.target.offsetTop+length/2;
-
-if(x-length>=p_left+3*length){
-    if(hasChessMan(x-length,y)==false)
-        addCircle(x-length,y);
-}
-if(x+length<=p_left+5*length){
-    if(hasChessMan(x+length,y)==false){
-        addCircle(x+length,y);
+if(now==user){
+    if(x-length>=p_left+3*length){        
+            addCircle(x-length,y);
     }
-}
-if(y-length>=p_top+7*length){
-    if(hasChessMan(x,y-length)==false)
-        addCircle(x,y-length);
-}
-if(y+length<=p_top+9*length){
-    if(hasChessMan(x,y+length)==false)
-        addCircle(x,y+length);
-}
-
-//飞将
-var i=1;
-while(y-i*length>=p_top){
-    if(hasChessMan(x,y-i*length)){
-        var array=document.getElementsByClassName('chessman');
-        for(var j=0;j<array.length;j++){
-            if(Math.abs(array[j].offsetLeft+length/2-x)<5&&
-                Math.abs(array[j].offsetTop+length/2-(y-i*length))<5){
-                    if(array[j].getAttribute('class').indexOf('jiang')>-1){
-                        addCircle(x,y-i*length);
-                        break;
-                    }
+    if(x+length<=p_left+5*length){
+            addCircle(x+length,y);
+    }
+    if(y-length>=p_top+7*length){       
+            addCircle(x,y-length);
+    }
+    if(y+length<=p_top+9*length){
+            addCircle(x,y+length);
+    }
+    //飞将
+    var i=1;
+    while(y-i*length>=p_top){
+        if(hasChessMan(x,y-i*length)){
+            var array=document.getElementsByClassName('chessman');
+            for(var j=0;j<array.length;j++){
+                if(Math.abs(array[j].offsetLeft+length/2-x)<5&&
+                    Math.abs(array[j].offsetTop+length/2-(y-i*length))<5){
+                        if(array[j].getAttribute('class').indexOf('jiang')>-1){
+                            addCircle(x,y-i*length);
+                            break;
+                        }
+                }
             }
+            break;
         }
-        break;
+        i++;            
     }
-    i++;            
+}else{
+    if(x-length>=p_left+3*length){
+            addCircle(x-length,y);
+    }
+    if(x+length<=p_left+5*length){
+            addCircle(x+length,y);
+    }
+    if(y-length>=p_top){
+            addCircle(x,y-length);
+    }
+    if(y+length<=p_top+2*length){
+            addCircle(x,y+length);
+    }
+    //飞将
+    var i=1;
+    while(y+i*length<=p_top+9*length){
+        if(hasChessMan(x,y+i*length)){
+            var array=document.getElementsByClassName('chessman');
+            for(var j=0;j<array.length;j++){
+                if(Math.abs(array[j].offsetLeft+length/2-x)<5&&
+                    Math.abs(array[j].offsetTop+length/2-(y+i*length))<5){
+                        if(array[j].getAttribute('class').indexOf('jiang')>-1){
+                            addCircle(x,y+i*length);
+                            break;
+                        }
+                }
+            }
+            break;
+        }
+        i++;            
+    }
 }
+
+
+
 }
 
 //判断输入位置是否有棋子
@@ -442,43 +541,46 @@ return false;
 
 //画出提示点
 function addCircle(x,y){
-//棋盘外不画点
-if(x>=p_left&&x<=(p_left+8*length)&&y>=p_top&&y<=(p_top+9*length)){
-    var circle=document.createElement("div");
-    circle.style.setProperty('left',x-10+'px');
-    circle.style.setProperty('top',y-10+'px');
-    circle.setAttribute('class','circle');
-    circle.addEventListener('click',move);
-    content.appendChild(circle);
-} 
+    //棋盘外不画点
+    if(x>=p_left&&x<=(p_left+8*length)&&y>=p_top&&y<=(p_top+9*length)){
+        var circle=document.createElement("div");
+        circle.style.setProperty('left',x-10+'px');
+        circle.style.setProperty('top',y-10+'px');
+        circle.setAttribute('class','circle');
+        circle.addEventListener('click',move);
+        content.appendChild(circle);
+    } 
 }
 
 //清除提示点
 function clearCircle(){
-//清理两次才能清除干净，？
-var array=document.getElementsByClassName('circle');
-while(1){
-    for(var i=0;i<array.length;i++)
-        content.removeChild(array[i]);
-    array=document.getElementsByClassName('circle');
-    if(array.length==0)
-        break;
-}
+    //清理两次才能清除干净，？
+    var array=document.getElementsByClassName('circle');
+    while(1){
+        for(var i=0;i<array.length;i++)
+            content.removeChild(array[i]);
+        array=document.getElementsByClassName('circle');
+        if(array.length==0)
+            break;
+    }
 }
 
 //点击提示点后移动
 function move(e){
-//提示点上没有棋子
-if(e.target.getAttribute('class').indexOf('circle')>-1){
-    //opponentMove(clickChessMan.offsetLeft,clickChessMan.offsetTop,e.target.offsetLeft+10-length/2,e.target.offsetTop+10-length/2);
-    clickChessMan.style.setProperty('left',e.target.offsetLeft+10-length/2+'px');
-    clickChessMan.style.setProperty('top',e.target.offsetTop+10-length/2+'px');
-    clearCircle();
-    active=false;
-} 
+    //提示点上没有棋子
+    if(e.target.getAttribute('class').indexOf('circle')>-1){
+        //opponentMove(clickChessMan.offsetLeft,clickChessMan.offsetTop,e.target.offsetLeft+10-length/2,e.target.offsetTop+10-length/2);
+        clickChessMan.style.setProperty('left',e.target.offsetLeft+10-length/2+'px');
+        clickChessMan.style.setProperty('top',e.target.offsetTop+10-length/2+'px');
+        clearCircle();
+        if(now==user)
+            now=opponent;
+        else
+            now=user;
+    } 
 }
 //收到对方下子的信息来移动对方的棋子
-module.exports.opponentMove=function opponentMove(fromX,fromY,toX,toY){
+function opponentMove(fromX,fromY,toX,toY){
 //坐标换算
 var maxX=8*length;
 var maxY=9*length;
@@ -527,4 +629,19 @@ for(var i=0;i<array.length;i++){
         }
 }
 return false;
+}
+
+function addAudio(){
+    var embed=document.createElement('audio');
+    embed.setAttribute('name','embedPlay');
+    embed.setAttribute('src','../audio/9204.mp3');
+    embed.setAttribute('autostart','false');
+    embed.setAttribute('hidden','true');
+    content.appendChild(embed);
+}
+addAudio();
+
+function  playAudio(){
+    var audio=document.getElementsByName('embedPlay');
+    audio[0].play();
 }

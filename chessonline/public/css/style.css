@@ -1,0 +1,74 @@
+body {
+  padding-top: 20px;
+  padding-left:20px; 
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#content{
+    align-items: center;
+    justify-content: flex-start;
+    padding:10px;
+    z-index: -1;
+}
+
+#chatroom{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px;
+}
+
+.chessman{
+  z-index: 10;
+  cursor: pointer;
+}
+
+#plain{
+  width: 500px;
+  z-index: 3;
+  margin: 0;
+}
+
+.circle{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: aquamarine;
+  cursor: pointer;
+}
+
+
+#msglog, #messageInput {
+  border: 1px solid #ccc;
+  width: 300px;
+  height: 250px;
+  overflow-y: auto;
+  font-size: 14px;
+    resize: none;
+}
+#messageInput {
+  height: 80px;
+}
+.message {
+  line-height: 22px;
+}
+.message .user {
+  padding-right: 5px;
+  padding-left: 5px;
+  color: brown;
+}
+.sysMsg {
+  color: #c1bfbf;
+  padding-right: 5px;
+  padding-left: 5px;
+  font-size: 12px;
+}
+#users {
+  width: 300px;
+  padding: 0 5px 5px;
+}
